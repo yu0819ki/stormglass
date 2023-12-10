@@ -4,54 +4,37 @@ import {
     Mesh,
     MeshBuilder,
     Scene,
-    ShadowGenerator,
     Tools,
     Vector3,
     Color3,
-    ReflectionProbe,
     AbstractMesh,
-    IShadowLight,
     StandardMaterial,
-    PBRMetallicRoughnessMaterial,
-    Matrix,
     Texture,
-    DynamicTexture,
-
     Material,
     CreateTube,
     CreateBox,
-    TransformNode, CreateCylinder,
+    CreateCylinder, ArcRotateCamera,
 } from '@babylonjs/core';
-import * as BABYLON from '@babylonjs/core';
 import {FurMaterial} from "@babylonjs/materials";
 import {Inspector} from '@babylonjs/inspector'
 import {WoodProceduralTexture} from "@babylonjs/procedural-textures";
 
 const sceneObjects: Array<AbstractMesh> = [];
 
-const objSize = 5;
-const halfSize = objSize / 2;
-
 export const createScene = (engine: Engine, canvas: HTMLCanvasElement): Scene => {
     const scene = new Scene(engine);
     // Fog
-    scene.fogMode = BABYLON.Scene.FOGMODE_LINEAR;
+    scene.fogMode = Scene.FOGMODE_LINEAR;
     scene.fogStart = 30.0;
     scene.fogEnd = 50.0;
 
-    const camera = new BABYLON.ArcRotateCamera('camera', Tools.ToRadians(-90), Tools.ToRadians(90), 30, new Vector3(0, 10, 0), scene);
+    const camera = new ArcRotateCamera('camera', Tools.ToRadians(-90), Tools.ToRadians(90), 30, new Vector3(0, 10, 0), scene);
     camera.attachControl(canvas, true);
 
     const hemisphericLight = new HemisphericLight('envLight', new Vector3(100, 100, 0), scene);
-    hemisphericLight.diffuse = new Color3(1, 1, 1);
-    hemisphericLight.specular = new Color3(1, 1, 1);
-    hemisphericLight.intensity = 0.5;
-    const light = new BABYLON.DirectionalLight('light', new Vector3(-10, -10, 0), scene);
-    light.diffuse = Color3.FromHexString('#FFFFFF');
-    light.specular = Color3.FromHexString('#FFFFFF');
-    light.position = new Vector3(100, 100, 0);
-    light.intensity = 0.3;
-    light.setEnabled(true);
+    hemisphericLight.diffuse = Color3.FromHexString('#FFFFFF');
+    hemisphericLight.specular = Color3.FromHexString('#FFFFCC');
+    hemisphericLight.intensity = 1;
 
     const ground = MeshBuilder.CreateGround('ground', { width: 100, height: 100, subdivisions: 20});
     const snowMat = new FurMaterial('snowMat', scene);
@@ -67,8 +50,6 @@ export const createScene = (engine: Engine, canvas: HTMLCanvasElement): Scene =>
     ground.material = snowMat;
     FurMaterial.FurifyMesh(ground, 90);
 
-    sceneObjects.push();
-    // addShadow(light);
     const trunkMat = new StandardMaterial('truncMat', scene);
     const trunkTx = new WoodProceduralTexture('truncTx', 512, scene);
     trunkTx.ampScale = 50;
@@ -80,21 +61,9 @@ export const createScene = (engine: Engine, canvas: HTMLCanvasElement): Scene =>
     Inspector.Show(scene, {
         embedMode: true,
     })
+    sceneObjects.push(ground, tree);
+
     return scene;
-}
-
-const addShadow = (light: IShadowLight): void => {
-    const shadowGenerator = new ShadowGenerator(1024, light);
-    shadowGenerator.useContactHardeningShadow = true;
-    shadowGenerator.useBlurCloseExponentialShadowMap = true;
-    shadowGenerator.setDarkness(0.1);
-
-    light.shadowMaxZ = 1000;
-    light.shadowMinZ = 100;
-    sceneObjects.forEach((mesh) => {
-        mesh.receiveShadows = true;
-        shadowGenerator.addShadowCaster(mesh);
-    });
 }
 
 const generateTree = (layer: number, treeHeight: number, trunkRevealHeight: number, trunkMaterial: Material, leavesMaterial: Material, scene: Scene): Mesh => {
@@ -102,8 +71,8 @@ const generateTree = (layer: number, treeHeight: number, trunkRevealHeight: numb
         const path = [];
         const step = l / t;
         for (let i = 0; i < l; i += step ) {
-            path.push(new BABYLON.Vector3(0, i, 0));
-            path.push(new BABYLON.Vector3(0, i, 0 ));
+            path.push(new Vector3(0, i, 0));
+            path.push(new Vector3(0, i, 0 ));
         }
         return path;
     };
