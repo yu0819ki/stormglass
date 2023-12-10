@@ -19,6 +19,7 @@
     "vite": "^5.0.0"
   },
   "dependencies": {
-    "@babylonjs/core": "^6.33.1"
+    "@babylonjs/core": "^6.33.1",
+    "@babylonjs/procedural-textures": "^6.33.1"
   }
 }

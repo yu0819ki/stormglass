@@ -36,6 +36,11 @@
   resolved "https://registry.yarnpkg.com/@babylonjs/materials/-/materials-6.33.1.tgz#91e6e384cec5f6e06f26a1766f19bef6ba5c4531"
   integrity sha512-+3OG3sKrJWnEo4QIS3sPhE4saKJZbptobxLyW960/rA6oA2cqCfDUPscxKQVtlblsVDq1NILcn7aeMnaCI3s5g==
 
+"@babylonjs/procedural-textures@^6.33.1":
+  version "6.33.1"
+  resolved "https://registry.yarnpkg.com/@babylonjs/procedural-textures/-/procedural-textures-6.33.1.tgz#20cd742148b5254fab9bdde84ab43f3cef662ea2"
+  integrity sha512-PTgGctCis4J9VQtc7flH0fHQyyDaghZA0ymMPHUj35dwWYB9PYHrBzQgMKzPuJvmwnbshK6PCTFUzyIQq324Cg==
+
 "@babylonjs/serializers@^6.33.1":
   version "6.33.1"
   resolved "https://registry.yarnpkg.com/@babylonjs/serializers/-/serializers-6.33.1.tgz#0775da5abdb3766821bb0ea56cd3fe85bec37722"
