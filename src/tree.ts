@@ -13,7 +13,7 @@ import {
     Material,
     CreateTube,
     CreateBox,
-    CreateCylinder, ArcRotateCamera,
+    CreateCylinder, ArcRotateCamera, ParticleSystem, BoxParticleEmitter, Color4,
 } from '@babylonjs/core';
 import {FurMaterial} from "@babylonjs/materials";
 import {Inspector} from '@babylonjs/inspector'
@@ -23,10 +23,13 @@ const sceneObjects: Array<AbstractMesh> = [];
 
 export const createScene = (engine: Engine, canvas: HTMLCanvasElement): Scene => {
     const scene = new Scene(engine);
+    scene.clearColor = Color3.FromHexString('#B8D1F2').toColor4();
+
     // Fog
     scene.fogMode = Scene.FOGMODE_LINEAR;
     scene.fogStart = 30.0;
     scene.fogEnd = 50.0;
+    scene.fogColor = Color3.FromHexString(scene.clearColor.toHexString(true));
 
     const camera = new ArcRotateCamera('camera', Tools.ToRadians(-90), Tools.ToRadians(90), 30, new Vector3(0, 10, 0), scene);
     camera.attachControl(canvas, true);
@@ -36,27 +39,8 @@ export const createScene = (engine: Engine, canvas: HTMLCanvasElement): Scene =>
     hemisphericLight.specular = Color3.FromHexString('#FFFFCC');
     hemisphericLight.intensity = 1;
 
-    const ground = MeshBuilder.CreateGround('ground', { width: 100, height: 100, subdivisions: 20});
-    const snowMat = new FurMaterial('snowMat', scene);
-    snowMat.highLevelFur = true;
-    snowMat.furLength = 1;
-    snowMat.furAngle = 0;
-    snowMat.furColor = Color3.White();
-    snowMat.diffuseTexture = new Texture('1x1-ffffffff.png');
-    snowMat.furSpacing = 1;
-    snowMat.furDensity = 1;
-    snowMat.furSpeed = 10000;
-
-    ground.material = snowMat;
-    FurMaterial.FurifyMesh(ground, 90);
-
-    const trunkMat = new StandardMaterial('truncMat', scene);
-    const trunkTx = new WoodProceduralTexture('truncTx', 512, scene);
-    trunkTx.ampScale = 50;
-    trunkMat.diffuseTexture = trunkTx;
-    const leavesMat = new StandardMaterial('leavesMat', scene);
-    leavesMat.diffuseColor = Color3.Green();
-    const tree = generateTree(4, 20, 4, trunkMat, leavesMat, scene);
+    const ground = buildSnowGround(100, scene);
+    const tree = generateTree(4, 20, 4, getTrunkMaterial(scene), getLeavesMaterial(scene), scene);
 
     Inspector.Show(scene, {
         embedMode: true,
@@ -96,5 +80,36 @@ const generateTree = (layer: number, treeHeight: number, trunkRevealHeight: numb
     leaves.position.y = trunkRevealHeight;
     trunk.position.y = trunkRevealHeight / 2;
     return leaves;
+}
+
+const buildSnowGround = (size: number, scene: Scene): Mesh => {
+    const ground = MeshBuilder.CreateGround('ground', { width: size, height: size, subdivisions: 20});
+    const snowMat = new FurMaterial('snowMat', scene);
+    snowMat.highLevelFur = true;
+    snowMat.furLength = 1;
+    snowMat.furAngle = 0;
+    snowMat.furColor = Color3.White();
+    snowMat.diffuseTexture = new Texture('1x1-ffffffff.png');
+    snowMat.furSpacing = 1;
+    snowMat.furDensity = 1;
+    snowMat.furSpeed = 10000;
+
+    ground.material = snowMat;
+    FurMaterial.FurifyMesh(ground, 90);
+    return ground;
+}
+
+const getTrunkMaterial = (scene: Scene): Material => {
+    const trunkMat = new StandardMaterial('truncMat', scene);
+    const trunkTx = new WoodProceduralTexture('truncTx', 512, scene);
+    trunkTx.ampScale = 50;
+    trunkMat.diffuseTexture = trunkTx;
+    return trunkMat;
+}
+
+const getLeavesMaterial = (scene: Scene): Material => {
+    const leavesMat = new StandardMaterial('leavesMat', scene);
+    leavesMat.diffuseColor = Color3.Green();
+    return leavesMat;
 }
 
