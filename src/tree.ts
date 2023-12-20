@@ -46,6 +46,7 @@ export const createScene = (engine: Engine, canvas: HTMLCanvasElement): Scene =>
         embedMode: true,
     })
     sceneObjects.push(ground, tree);
+    fallSnow(20000, scene);
 
     return scene;
 }
@@ -111,5 +112,28 @@ const getLeavesMaterial = (scene: Scene): Material => {
     const leavesMat = new StandardMaterial('leavesMat', scene);
     leavesMat.diffuseColor = Color3.Green();
     return leavesMat;
+}
+
+const fallSnow = (capacity: number, scene: Scene) => {
+    const ps = new ParticleSystem('snowParticleSystem', capacity, scene);
+    ps.particleTexture = new Texture('SnowDot.png', scene);
+    ps.emitter = new Vector3(0, 50, 0);
+    const boxEmitter = new BoxParticleEmitter();
+    boxEmitter.direction1 = Vector3.Zero();
+    boxEmitter.direction2 = Vector3.Zero();
+    boxEmitter.minEmitBox = new Vector3(-50, 0, -50);
+    boxEmitter.maxEmitBox = new Vector3(50, 0, 50);
+    ps.particleEmitterType = boxEmitter;
+    ps.minSize = 0.1;
+    ps.maxSize = 0.2;
+    ps.minLifeTime = 12;
+    ps.maxLifeTime = 16;
+    ps.emitRate = 1000;
+    ps.gravity = new Vector3(0, -0.5, 0);
+    ps.noiseStrength = new Vector3(10, 10, 10);
+    ps.blendMode = ParticleSystem.BLENDMODE_ONEONE;
+    ps.textureMask = new Color4(1, 1, 1, 1);
+
+    ps.start();
 }
 
